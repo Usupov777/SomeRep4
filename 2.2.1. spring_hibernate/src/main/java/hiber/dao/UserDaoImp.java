@@ -1,9 +1,11 @@
 package hiber.dao;
 
+import hiber.model.Car;
 import hiber.model.User;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -19,6 +21,15 @@ public class UserDaoImp implements UserDao {
       sessionFactory.getCurrentSession().save(user);
    }
 
+   @Override
+   public User getUserByCarSeriesAndNumber(String model, int series){
+
+      return (User) sessionFactory.getCurrentSession()
+              .createQuery("select user from User user inner join user.car car " +
+                      "where car.series = :series and car.model = :model")
+              .setParameter("series", series).setParameter("model", model)
+              .uniqueResult();
+   }
    @Override
    @SuppressWarnings("unchecked")
    public List<User> listUsers() {
